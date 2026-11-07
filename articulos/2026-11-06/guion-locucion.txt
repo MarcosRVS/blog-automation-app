@@ -1,0 +1,68 @@
+IA esta semana (número 2): Mistral Large 4 abierto y memoria 30 veces.
+La primera semana de noviembre consolida el paso de los modelos frontera hacia infraestructuras abiertas y auditables. Desde Francia, Mistral AI liberó los pesos de Mistral Large 4, un modelo multimodal de un billón de parámetros entrenado íntegramente en centros de datos europeos. En paralelo, Google Cloud documentó cómo los frameworks ofensivos multiagente ya reducen intrusiones complejas en la nube a menos de tres horas.
+
+En el plano del silicio, NVIDIA demostró que el cuello de botella agéntico ya no reside solo en la capacidad bruta de memoria, sino en el codiseño entre hardware y software para gestionar millones de tokens de contexto activo. MediaTek reforzó esa misma tesis con su arquitectura de empaquetado heterogéneo para aceleradores personalizados.
+
+Esta edición reúne 10 anuncios oficiales verificados de los últimos siete días. Incluye hitos de Europa (Mistral AI, SAP y Hugging Face), Estados Unidos (NVIDIA, Google Cloud y OpenAI) y tres protagonistas de Asia (MediaTek en Taiwán, NAVER Cloud en Corea del Sur y Alibaba Cloud en su expansión europea).
+Modelos abiertos y evaluación: Europa mueve ficha.
+Mistral AI: pesos abiertos de Mistral Large 4.
+
+Mistral AI publicó el 3 de noviembre los pesos abiertos de Mistral Large 4, conocido internamente como Le Chonk. El modelo emplea una arquitectura Mixture-of-Experts (MoE, mezcla de expertos que activa solo una fracción de la red en cada consulta) nativa multimodal de 1 billón de parámetros totales, de los cuales activa 49.000 millones por token procesado, cerca del 5 % de su capacidad total.
+
+El entrenamiento se ejecutó desde cero sobre 3.800 GPUs NVIDIA Grace Blackwell desplegadas en centros de datos europeos de la compañía. El modelo ofrece una ventana de contexto de 1 millón de tokens, orientada a ingeniería de software agéntica, auditoría de código a escala de repositorio y razonamiento matemático.
+
+En su plataforma comercial Mistral Studio y vía API, el precio oficial queda fijado en $1,36 por millón de tokens de entrada y $4,18 por millón de tokens de salida. La publicación de los pesos permite a empresas reguladas e instituciones públicas europeas ejecutar un modelo de escala billonaria en infraestructura propia sin depender de APIs externas.
+
+Con este lanzamiento, el ecosistema europeo coloca una alternativa directa frente a los modelos abiertos asiáticos en tareas de programación autónoma y ciberseguridad defensiva, reduciendo el coste de inferencia mediante su baja tasa de parámetros activos.
+
+Hugging Face: StateBench y ToyBlocks.
+
+El blog oficial de Hugging Face presentó dos herramientas abiertas para medir y entrenar sistemas autónomos en escenarios de larga duración. El 3 de noviembre se publicó StateBench, un benchmark diseñado junto a investigadores de Ai2 para evaluar cómo los modelos de lenguaje mantienen el estado de entidades a lo largo de documentos extensos.
+
+Basado en la teoría algebraica de Krohn-Rhodes, StateBench divide la complejidad del seguimiento en cuatro niveles, desde referencias inmutables hasta permutaciones generales, mostrando caídas pronunciadas de precisión incluso en modelos frontera cuando crecen las cadenas de dependencia. Tres días después, el 6 de noviembre, llegó ToyBlocks, el primer entorno de la serie FoundationWorlds sobre Isaac Sim e IsaacLab, que genera decenas de miles de episodios de manipulación robótica en formato LeRobot sin requerir teleoperación humana.
+Silicio e infraestructura: más rendimiento por cada byte.
+NVIDIA: codiseño de memoria 30 veces.
+
+NVIDIA detalló el 5 de noviembre cómo el codiseño entre chips, compiladores y motores de inferencia resuelve el desafío de memoria de los agentes autónomos. En flujos agénticos complejos, las llamadas sucesivas a herramientas acumulan hasta 3 millones de tokens de memoria de trabajo y caché KV por tarea.
+
+Aunque el salto físico de capacidad HBM por GPU entre las plataformas Blackwell Ultra y Vera Rubin es de apenas un 3 %, la optimización a nivel de pila completa multiplica hasta por 30 veces el rendimiento agéntico por dólar en el benchmark SemiAnalysis AgentX. La clave está en comprimir y reutilizar el estado de contexto sin saturar el ancho de banda entre memoria y cálculo.
+
+MediaTek: empaquetado heterogéneo en XPUs.
+
+El 6 de noviembre, MediaTek publicó su análisis técnico sobre la evolución de los aceleradores de IA personalizados, denominados XPUs. La firma taiwanesa explica por qué el diseño monolítico en un único dado de silicio ha cedido el paso a plataformas de integración heterogénea.
+
+Mediante chiplets modulares, empaquetado avanzado 2.5D/3D, pilas de memoria HBM de alta densidad e interconexiones de alta velocidad, los diseñadores cooptimizan el cómputo y el movimiento físico de los datos desde el paquete del chip hasta el rack del centro de datos, reduciendo el consumo energético por token generado.
+
+OpenAI: campus de cómputo y seguridad.
+
+OpenAI presentó el 5 de noviembre su National Community Compact y el Compute Campus Policy Blueprint, el marco con el que rebautiza y regula sus grandes centros de datos bajo el concepto de campus de cómputo. La compañía se compromete a asumir el 100 % del coste de ampliación de la red eléctrica para no encarecer las tarifas residenciales locales, adoptar refrigeración de bajo consumo hídrico y eliminar los acuerdos de confidencialidad con los ayuntamientos.
+
+Dos días antes, el 3 de noviembre, la organización inició su nuevo sprint interno de seguridad para blindar su propia infraestructura frente a amenazas avanzadas y fugas de pesos, integrando verificaciones automatizadas en sus canalizaciones de despliegue.
+Seguridad y redes empresariales: agentes bajo control.
+Google Cloud: alerta por el framework ARTEX.
+
+El equipo de inteligencia de amenazas de Google Cloud publicó el 30 de octubre un análisis sobre el auge de los frameworks ofensivos agénticos como ARTEX, CyberStrikeAI y CAIRN. Estas plataformas orquestan múltiples agentes impulsados por modelos de lenguaje para automatizar el reconocimiento, la explotación de vulnerabilidades y el movimiento lateral en entornos cloud.
+
+Según los datos recopilados por Mandiant y Google Threat Intelligence, el uso de estos sistemas ha comprimido intrusiones que antes requerían semanas a menos de 3 horas, con un coste operativo observado de apenas $5 por tarea en paneles expuestos. Actores vinculados al grupo Storm-0940 ya emplean estas herramientas en campañas reales.
+
+SAP: agentes en redes de suministro.
+
+SAP anunció el 3 de noviembre la incorporación de agentic harnesses (arneses de control y ejecución segura para agentes) dentro de SAP Business Network. El objetivo es automatizar la colaboración entre socios comerciales, la conciliación de pedidos y la respuesta ante interrupciones logísticas manteniendo trazabilidad, control de APIs y límites operativos estrictos.
+
+El anuncio se complementó el 6 de noviembre con un estudio global de SAP que advierte que la velocidad de despliegue de la IA supera la capacidad de adaptación de los procesos internos en la mayoría de las organizaciones, exigiendo gobernanza integrada antes de escalar agentes autónomos.
+Despliegue industrial y Asia: logística, ciudades y nube.
+NAVER Cloud: logística militar e IA para pymes.
+
+Desde Corea del Sur, NAVER Cloud anunció el 2 de noviembre un acuerdo con el Comando Logístico del Ejército de la República de Corea para desarrollar un sistema de logística militar asistido por IA. La plataforma aplicará modelos propios al mantenimiento predictivo de equipamiento, gestión de inventarios críticos y optimización de rutas de suministro en tiempo real.
+
+En la misma jornada, la consejera delegada de NAVER, Choi Soo-yeon, afirmó que "el verdadero punto de inflexión de la IA industrial llegará cuando incluso las pequeñas empresas puedan usarla con facilidad", presentando herramientas simplificadas para comercios y pymes del ecosistema surcoreano.
+
+Alibaba Cloud: primera región en Países Bajos.
+
+Alibaba Cloud inauguró su primera región de nube pública en los Países Bajos para reforzar su infraestructura en Europa bajo normas comunitarias de protección de datos y resiliencia operativa. El nuevo nodo ofrece capacidades de cómputo elástico, almacenamiento distribuido y acceso local a su catálogo de servicios de IA para empresas europeas y multinacionales que operan en la región.
+
+NVIDIA: gemelos digitales en Kaohsiung y Europa.
+
+El 2 de noviembre, NVIDIA mostró cómo gobiernos municipales y operadores de transporte están escalando servicios públicos con IA física y agéntica sobre Metropolis, Omniverse y DeepStream. Entre los casos destacados figuran la ciudad portuaria de Kaohsiung, en Taiwán, y el operador ferroviario francés SNCF, que combinan gemelos digitales y agentes de visión artificial para coordinar el tráfico urbano, la seguridad en estaciones y la respuesta ante emergencias.
+Nuestra lectura.
+La semana deja tres conclusiones operativas para cualquier director de tecnología. Primero, la combinación de Mistral Large 4 en pesos abiertos y las mejoras de 30 veces en eficiencia de memoria de NVIDIA reduce drásticamente el umbral para ejecutar modelos de primer nivel en infraestructura controlada. Segundo, los datos de Google Cloud sobre ARTEX (menos de 3 horas por intrusión a $5 por tarea) obligan a tratar la defensa automatizada como prioridad inmediata. Por último, tanto SAP en cadenas de suministro como NAVER en logística confirman que el valor empresarial ya no está en el chatbot aislado, sino en el arnés de gobernanza que conecta los agentes con los sistemas transaccionales.

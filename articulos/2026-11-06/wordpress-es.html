@@ -1,0 +1,105 @@
+<!-- Meta título: IA esta semana (N.º 2): Mistral Large 4 abierto y memoria 30× (60 car.)
+Meta descripción: Mistral libera los pesos de su modelo de un billón de parámetros, NVIDIA multiplica por 30 el rendimiento agéntico y Google alerta sobre ARTEX. (143 car.)
+Categorías: IA · Innovación · Estado del sector
+Tags: IA, innovación, semiconductores, seguridad, agentes, robótica, cloud -->
+
+<p>La primera semana de noviembre consolida el paso de los modelos frontera hacia infraestructuras abiertas y auditables. Desde Francia, <a href="https://mistral.ai/news/mistral-large-4-is-now-open-weight/" target="_blank" rel="noopener">Mistral AI liberó los pesos de Mistral Large 4</a>, un modelo multimodal de un billón de parámetros entrenado íntegramente en centros de datos europeos <strong>[1]</strong>. En paralelo, <a href="https://cloud.google.com/blog/topics/threat-intelligence/artex-agentic-offensive-frameworks" target="_blank" rel="noopener">Google Cloud documentó cómo los frameworks ofensivos multiagente</a> ya reducen intrusiones complejas en la nube a menos de tres horas <strong>[8]</strong>.</p>
+
+<p>En el plano del silicio, <a href="https://blogs.nvidia.com/blog/more-performance-from-every-byte/" target="_blank" rel="noopener">NVIDIA demostró que el cuello de botella agéntico</a> ya no reside solo en la capacidad bruta de memoria, sino en el codiseño entre hardware y software para gestionar millones de tokens de contexto activo <strong>[4]</strong>. <a href="https://www.mediatek.com/news/articles/inside-the-xpu-how-heterogeneous-packaging-and-custom-silicon-drive-ai-efficiency" target="_blank" rel="noopener">MediaTek reforzó esa misma tesis</a> con su arquitectura de empaquetado heterogéneo para aceleradores personalizados <strong>[5]</strong>.</p>
+
+<p>Esta edición reúne 10 anuncios oficiales verificados de los últimos siete días. Incluye hitos de Europa (Mistral AI, SAP y Hugging Face), Estados Unidos (NVIDIA, Google Cloud y OpenAI) y tres protagonistas de Asia (MediaTek en Taiwán, NAVER Cloud en Corea del Sur y Alibaba Cloud en su expansión europea).</p>
+
+<h2>Modelos abiertos y evaluación: Europa mueve ficha</h2>
+
+<h3>Mistral AI — pesos abiertos de Mistral Large 4</h3>
+
+<p><a href="https://mistral.ai/news/mistral-large-4-is-now-open-weight/" target="_blank" rel="noopener">Mistral AI publicó el 3 de noviembre los pesos abiertos de Mistral Large 4</a>, conocido internamente como <em>Le Chonk</em> <strong>[1]</strong>. El modelo emplea una arquitectura <em>Mixture-of-Experts</em> (MoE, mezcla de expertos que activa solo una fracción de la red en cada consulta) nativa multimodal de <strong>1 billón de parámetros totales</strong>, de los cuales activa <strong>49.000 millones</strong> por token procesado, cerca del <strong>5 %</strong> de su capacidad total <strong>[1]</strong>.</p>
+
+<p>El entrenamiento se ejecutó desde cero sobre <strong>3.800 GPUs NVIDIA Grace Blackwell</strong> desplegadas en centros de datos europeos de la compañía <strong>[1]</strong>. El modelo ofrece una ventana de contexto de <strong>1 millón de tokens</strong>, orientada a ingeniería de software agéntica, auditoría de código a escala de repositorio y razonamiento matemático <strong>[1]</strong>.</p>
+
+<p>En su plataforma comercial Mistral Studio y vía API, el precio oficial queda fijado en <strong>$1,36 por millón de tokens de entrada</strong> y <strong>$4,18 por millón de tokens de salida</strong> <strong>[1]</strong>. La publicación de los pesos permite a empresas reguladas e instituciones públicas europeas ejecutar un modelo de escala billonaria en infraestructura propia sin depender de APIs externas <strong>[1]</strong>.</p>
+
+<p>Con este lanzamiento, el ecosistema europeo coloca una alternativa directa frente a los modelos abiertos asiáticos en tareas de programación autónoma y ciberseguridad defensiva, reduciendo el coste de inferencia mediante su baja tasa de parámetros activos <strong>[1]</strong>.</p>
+
+<h3>Hugging Face — StateBench y ToyBlocks</h3>
+
+<p>El blog oficial de Hugging Face presentó dos herramientas abiertas para medir y entrenar sistemas autónomos en escenarios de larga duración <strong>[2]</strong><strong>[3]</strong>. El 3 de noviembre se publicó <a href="https://huggingface.co/blog/state-bench" target="_blank" rel="noopener">StateBench, un benchmark diseñado junto a investigadores de Ai2</a> para evaluar cómo los modelos de lenguaje mantienen el estado de entidades a lo largo de documentos extensos <strong>[2]</strong>.</p>
+
+<p>Basado en la teoría algebraica de Krohn-Rhodes, StateBench divide la complejidad del seguimiento en <strong>cuatro niveles</strong>, desde referencias inmutables hasta permutaciones generales, mostrando caídas pronunciadas de precisión incluso en modelos frontera cuando crecen las cadenas de dependencia <strong>[2]</strong>. Tres días después, el 6 de noviembre, llegó <a href="https://huggingface.co/blog/toyblocks" target="_blank" rel="noopener">ToyBlocks, el primer entorno de la serie FoundationWorlds</a> sobre Isaac Sim e IsaacLab, que genera <strong>decenas de miles de episodios</strong> de manipulación robótica en formato LeRobot sin requerir teleoperación humana <strong>[3]</strong>.</p>
+
+<h2>Silicio e infraestructura: más rendimiento por cada byte</h2>
+
+<h3>NVIDIA — codiseño de memoria 30×</h3>
+
+<p><a href="https://blogs.nvidia.com/blog/more-performance-from-every-byte/" target="_blank" rel="noopener">NVIDIA detalló el 5 de noviembre cómo el codiseño entre chips, compiladores y motores de inferencia</a> resuelve el desafío de memoria de los agentes autónomos <strong>[4]</strong>. En flujos agénticos complejos, las llamadas sucesivas a herramientas acumulan hasta <strong>3 millones de tokens</strong> de memoria de trabajo y caché KV por tarea <strong>[4]</strong>.</p>
+
+<p>Aunque el salto físico de capacidad HBM por GPU entre las plataformas Blackwell Ultra y Vera Rubin es de apenas un <strong>3 %</strong>, la optimización a nivel de pila completa multiplica hasta por <strong>30× el rendimiento agéntico por dólar</strong> en el benchmark SemiAnalysis AgentX <strong>[4]</strong>. La clave está en comprimir y reutilizar el estado de contexto sin saturar el ancho de banda entre memoria y cálculo <strong>[4]</strong>.</p>
+
+<h3>MediaTek — empaquetado heterogéneo en XPUs</h3>
+
+<p>El 6 de noviembre, <a href="https://www.mediatek.com/news/articles/inside-the-xpu-how-heterogeneous-packaging-and-custom-silicon-drive-ai-efficiency" target="_blank" rel="noopener">MediaTek publicó su análisis técnico sobre la evolución de los aceleradores XPUs</a> <strong>[5]</strong>. La firma taiwanesa explica por qué el diseño monolítico en un único dado de silicio ha cedido el paso a plataformas de integración heterogénea <strong>[5]</strong>.</p>
+
+<p>Mediante <em>chiplets</em> modulares, empaquetado avanzado 2.5D/3D, pilas de memoria HBM de alta densidad e interconexiones de alta velocidad, los diseñadores cooptimizan el cómputo y el movimiento físico de los datos desde el paquete del chip hasta el rack del centro de datos, reduciendo el consumo energético por token generado <strong>[5]</strong>.</p>
+
+<h3>OpenAI — campus de cómputo y seguridad</h3>
+
+<p>OpenAI presentó el 5 de noviembre su <a href="https://openai.com/index/setting-a-new-standard-for-responsible-ai-infrastructure/" target="_blank" rel="noopener">National Community Compact y el Compute Campus Policy Blueprint</a>, el marco con el que rebautiza y regula sus grandes centros de datos bajo el concepto de campus de cómputo <strong>[6]</strong>. La compañía se compromete a asumir el <strong>100 % del coste de ampliación de la red eléctrica</strong> para no encarecer las tarifas residenciales locales, adoptar refrigeración de bajo consumo hídrico y eliminar los acuerdos de confidencialidad con los ayuntamientos <strong>[6]</strong>.</p>
+
+<p>Dos días antes, el 3 de noviembre, la organización inició <a href="https://openai.com/index/preparing-our-next-security-sprint-to-harden-openai/" target="_blank" rel="noopener">su nuevo sprint interno de seguridad</a> para blindar su propia infraestructura frente a amenazas avanzadas y fugas de pesos, integrando verificaciones automatizadas en sus canalizaciones de despliegue <strong>[7]</strong>.</p>
+
+<h2>Seguridad y redes empresariales: agentes bajo control</h2>
+
+<h3>Google Cloud — alerta por el framework ARTEX</h3>
+
+<p>El equipo de inteligencia de amenazas de Google Cloud publicó el 30 de octubre un <a href="https://cloud.google.com/blog/topics/threat-intelligence/artex-agentic-offensive-frameworks" target="_blank" rel="noopener">análisis sobre el auge de los frameworks ofensivos agénticos</a> como ARTEX, CyberStrikeAI y CAIRN <strong>[8]</strong>. Estas plataformas orquestan múltiples agentes impulsados por modelos de lenguaje para automatizar el reconocimiento, la explotación de vulnerabilidades y el movimiento lateral en entornos cloud <strong>[8]</strong>.</p>
+
+<p>Según los datos recopilados por Mandiant y Google Threat Intelligence, el uso de estos sistemas ha comprimido intrusiones que antes requerían semanas a <strong>menos de 3 horas</strong>, con un coste operativo observado de apenas <strong>$5 por tarea</strong> en paneles expuestos <strong>[8]</strong>. Actores vinculados al grupo Storm-0940 ya emplean estas herramientas en campañas reales <strong>[8]</strong>.</p>
+
+<h3>SAP — agentes en redes de suministro</h3>
+
+<p>SAP anunció el 3 de noviembre la incorporación de <a href="https://news.sap.com/2026/11/business-networks-harness-agentic-ai/" target="_blank" rel="noopener">agentic harnesses dentro de SAP Business Network</a> <strong>[9]</strong>. El objetivo es automatizar la colaboración entre socios comerciales, la conciliación de pedidos y la respuesta ante interrupciones logísticas manteniendo trazabilidad, control de APIs y límites operativos estrictos <strong>[9]</strong>.</p>
+
+<p>El anuncio se complementó el 6 de noviembre con <a href="https://news.sap.com/2026/11/new-research-finds-ai-is-moving-faster-than-organizations-can-adapt/" target="_blank" rel="noopener">un estudio global de SAP sobre adopción de IA</a> que advierte que la velocidad de despliegue tecnológico supera la capacidad de adaptación de los procesos internos en la mayoría de las organizaciones, exigiendo gobernanza integrada antes de escalar agentes autónomos <strong>[10]</strong>.</p>
+
+<h2>Despliegue industrial y Asia: logística, ciudades y nube</h2>
+
+<h3>NAVER Cloud — logística militar e IA para pymes</h3>
+
+<p>Desde Corea del Sur, <a href="https://www.navercorp.com/en/news/2867" target="_blank" rel="noopener">NAVER Cloud anunció el 2 de noviembre un acuerdo con el Comando Logístico del Ejército de la República de Corea</a> para desarrollar un sistema de logística militar asistido por IA <strong>[11]</strong>. La plataforma aplicará modelos propios al mantenimiento predictivo de equipamiento, gestión de inventarios críticos y optimización de rutas de suministro en tiempo real <strong>[11]</strong>.</p>
+
+<blockquote><p>En la misma jornada, <a href="https://www.navercorp.com/en/news/2866" target="_blank" rel="noopener">la consejera delegada de NAVER, Choi Soo-yeon</a>, afirmó que "el verdadero punto de inflexión de la IA industrial llegará cuando incluso las pequeñas empresas puedan usarla con facilidad" (trad.) <strong>[12]</strong>.</p></blockquote>
+
+<h3>Alibaba Cloud — primera región en Países Bajos</h3>
+
+<p><a href="https://www.alibabacloud.com/blog/alibaba-cloud-launches-first-public-cloud-region-in-the-netherlands_601704" target="_blank" rel="noopener">Alibaba Cloud inauguró su primera región de nube pública en los Países Bajos</a> para reforzar su infraestructura en Europa bajo normas comunitarias de protección de datos y resiliencia operativa <strong>[13]</strong>. El nuevo nodo ofrece capacidades de cómputo elástico, almacenamiento distribuido y acceso local a su catálogo de servicios de IA para empresas europeas y multinacionales que operan en la región <strong>[13]</strong>.</p>
+
+<h3>NVIDIA — gemelos digitales en Kaohsiung y Europa</h3>
+
+<p>El 2 de noviembre, <a href="https://blogs.nvidia.com/blog/cities-worldwide-build-and-scale-ai-services/" target="_blank" rel="noopener">NVIDIA mostró cómo gobiernos municipales y operadores de transporte escalan servicios con IA física y agéntica</a> sobre Metropolis, Omniverse y DeepStream <strong>[14]</strong>. Entre los casos destacados figuran la ciudad portuaria de Kaohsiung, en Taiwán, y el operador ferroviario francés SNCF, que combinan gemelos digitales y agentes de visión artificial para coordinar el tráfico urbano, la seguridad en estaciones y la respuesta ante emergencias <strong>[14]</strong>.</p>
+
+<h2>Nuestra lectura</h2>
+
+<p>La semana deja tres conclusiones operativas para cualquier director de tecnología. Primero, la combinación de Mistral Large 4 en pesos abiertos <strong>[1]</strong> y las mejoras de <strong>30× en eficiencia de memoria</strong> de NVIDIA <strong>[4]</strong> reduce drásticamente el umbral para ejecutar modelos de primer nivel en infraestructura controlada. Segundo, los datos de Google Cloud sobre ARTEX (<strong>menos de 3 horas</strong> por intrusión a <strong>$5 por tarea</strong> <strong>[8]</strong>) obligan a tratar la defensa automatizada como prioridad inmediata. Por último, tanto SAP en cadenas de suministro <strong>[9]</strong> como NAVER en logística <strong>[11]</strong> confirman que el valor empresarial ya no está en el chatbot aislado, sino en el arnés de gobernanza que conecta los agentes con los sistemas transaccionales.</p>
+
+<h2>Fuentes</h2>
+
+<ul>
+<li><strong>[1]</strong> Mistral AI — <a href="https://mistral.ai/news/mistral-large-4-is-now-open-weight/" target="_blank" rel="noopener">"Mistral Large 4 (Le Chonk) is now open weight"</a>, 3 nov 2026.</li>
+<li><strong>[2]</strong> Hugging Face — <a href="https://huggingface.co/blog/state-bench" target="_blank" rel="noopener">"StateBench: Testing how language models track state changes over long documents"</a>, 3 nov 2026.</li>
+<li><strong>[3]</strong> Hugging Face — <a href="https://huggingface.co/blog/toyblocks" target="_blank" rel="noopener">"ToyBlocks: A controlled world for robot learning and evaluation"</a>, 6 nov 2026.</li>
+<li><strong>[4]</strong> NVIDIA — <a href="https://blogs.nvidia.com/blog/more-performance-from-every-byte/" target="_blank" rel="noopener">"More Performance From Every Byte: How Full-Stack Codesign Solves AI's Memory Challenge"</a>, 5 nov 2026.</li>
+<li><strong>[5]</strong> MediaTek — <a href="https://www.mediatek.com/news/articles/inside-the-xpu-how-heterogeneous-packaging-and-custom-silicon-drive-ai-efficiency" target="_blank" rel="noopener">"Inside the XPU: How Heterogeneous Packaging and Custom Silicon Drive AI Efficiency"</a>, 6 nov 2026.</li>
+<li><strong>[6]</strong> OpenAI — <a href="https://openai.com/index/setting-a-new-standard-for-responsible-ai-infrastructure/" target="_blank" rel="noopener">"Setting a new standard for responsible AI infrastructure"</a>, 5 nov 2026.</li>
+<li><strong>[7]</strong> OpenAI — <a href="https://openai.com/index/preparing-our-next-security-sprint-to-harden-openai/" target="_blank" rel="noopener">"Preparing our next security sprint to harden OpenAI"</a>, 3 nov 2026.</li>
+<li><strong>[8]</strong> Google Cloud — <a href="https://cloud.google.com/blog/topics/threat-intelligence/artex-agentic-offensive-frameworks" target="_blank" rel="noopener">"ARTEX and Friends: Enter Agentic Offensive Frameworks"</a>, 30 oct 2026.</li>
+<li><strong>[9]</strong> SAP — <a href="https://news.sap.com/2026/11/business-networks-harness-agentic-ai/" target="_blank" rel="noopener">"Business Networks Harness Agentic AI to Bolster Collaboration and Operational Resilience Among Trading Partners"</a>, 3 nov 2026.</li>
+<li><strong>[10]</strong> SAP — <a href="https://news.sap.com/2026/11/new-research-finds-ai-is-moving-faster-than-organizations-can-adapt/" target="_blank" rel="noopener">"New Research Finds AI Is Moving Faster Than Organizations Can Adapt"</a>, 6 nov 2026.</li>
+<li><strong>[11]</strong> NAVER — <a href="https://www.navercorp.com/en/news/2867" target="_blank" rel="noopener">"NAVER Cloud Sets Out to Build 'Combat-Ready AI Logistics' with Republic of Korea Army Logistics Command"</a>, 2 nov 2026.</li>
+<li><strong>[12]</strong> NAVER — <a href="https://www.navercorp.com/en/news/2866" target="_blank" rel="noopener">"NAVER CEO Choi Soo-yeon: 'The True Tipping Point for Industrial AI Will Come When Even Small Businesses Can Easily Use AI'"</a>, 2 nov 2026.</li>
+<li><strong>[13]</strong> Alibaba Cloud — <a href="https://www.alibabacloud.com/blog/alibaba-cloud-launches-first-public-cloud-region-in-the-netherlands_601704" target="_blank" rel="noopener">"Alibaba Cloud Launches First Public Cloud Region in the Netherlands"</a>, 29 oct 2026.</li>
+<li><strong>[14]</strong> NVIDIA — <a href="https://blogs.nvidia.com/blog/cities-worldwide-build-and-scale-ai-services/" target="_blank" rel="noopener">"Cities Worldwide Build and Scale AI Services With NVIDIA Physical and Agentic AI"</a>, 2 nov 2026.</li>
+</ul>
+
+<p><em>Redactado y revisado por el equipo editorial del blog.</em></p>
+
+<p><strong>¿El resumen semanal en tu correo? Suscríbete al newsletter del blog.</strong></p>
