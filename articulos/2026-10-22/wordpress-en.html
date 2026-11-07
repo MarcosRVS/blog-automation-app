@@ -1,0 +1,123 @@
+<!-- Meta title: AI This Week (No. 1): php2shell and Models à la Carte (54 chars)
+Meta description: php2shell forces a coordinated industry response; frontier models land in other clouds; Southeast Asia's digital economy grows 17% this year. (141 chars)
+Categories: AI · Innovation · Industry pulse
+Tags: AI, innovation, cloud, security, agents, quantum -->
+
+<p>The week opened with two critical vulnerabilities in PHP's runtime, known as php2shell, able to turn a web server into a remote execution channel <strong>[1]</strong>. The defense came together in hours, with AI-assisted research <strong>[1]</strong><strong>[3]</strong>.</p>
+
+<p>OpenAI enters <a href="https://openai.com/index/openai-models-google-cloud/" target="_blank" rel="noopener">Google Cloud's Model Garden</a> <strong>[6]</strong>, DeepSeek opens <a href="https://api-docs.deepseek.com/zh-cn/news/news261017" target="_blank" rel="noopener">web search in its API</a> <strong>[7]</strong>, and Qwen publishes <a href="https://huggingface.co/papers/2610.23986" target="_blank" rel="noopener">its visual-agent benchmark</a> <strong>[8]</strong>.</p>
+
+<p>This edition gathers 12 official announcements from the past 7 days. Three come from Asian companies; the closer brings Southeast Asia's macro number.</p>
+
+<h2>Security: a coordinated response within 24 hours</h2>
+
+<h3>Cloudflare — default-on WAF</h3>
+
+<p><a href="https://blog.cloudflare.com/php-vulnerabilities-waf-protection/" target="_blank" rel="noopener">Calif.io, Wiz, OpenAI and Quarkslab disclosed two PHP vulnerabilities</a> on October 21: CVE-2026-109618 and CVE-2026-109619, known as php2shell <strong>[1]</strong>. They affect every server running PHP 5.4 or later: denial of service, remote code execution and data exposure <strong>[1]</strong>. PHP backs nearly <strong>70%</strong> of websites <strong>[1]</strong>.</p>
+
+<p><a href="https://www.php.net/archive/2026.php#2026-10-21-5" target="_blank" rel="noopener">PHP published the official advisory</a> with the patch versions: <strong>8.5.12, 8.4.27, 8.3.36 and 8.2.35</strong> <strong>[2]</strong>. Cloudflare turned default-on WAF rules for all its customers at <strong>03:02 UTC on October 21</strong>, about nine hours before disclosure <strong>[1]</strong>.</p>
+
+<p>The finding came through a new route: Calif used GPT-5.6 Sol in <a href="https://openai.com/index/coordinated-disclosure-of-critical-vulnerabilities/" target="_blank" rel="noopener">OpenAI's Patch the Planet program</a>, and Wiz reported it independently <strong>[3]</strong>. OpenAI speaks of a "defender's window" and shipped a version checker as a Codex skill <strong>[3]</strong>.</p>
+
+<p>The deeper novelty is <em>full transaction detection</em>: <a href="https://blog.cloudflare.com/full-transaction-waf/" target="_blank" rel="noopener">Cloudflare's WAF</a> correlates request and response and can stop the server's response before it reaches the attacker <strong>[4]</strong>. It is the first release of managed detections with this capability <strong>[4]</strong>. Patching PHP remains mandatory; the WAF is a second layer <strong>[1]</strong>.</p>
+
+<h3>Microsoft — Guardian Agents</h3>
+
+<p>Microsoft <a href="https://blogs.microsoft.com/blog/2026/10/19/securing-the-agentic-insider/" target="_blank" rel="noopener">named the risk</a>: the <em>agentic insider</em>, an agent deployed by the company itself <strong>[5]</strong>. Agents often ship over-privileged and untrustworthy by default; they optimize outcomes, not norms <strong>[5]</strong>.</p>
+
+<p>The playbook: Guardian Agents watch every action 24/7 with per-agent identity, permissions and dynamic risk scoring (Project Perception) <strong>[5]</strong>.</p>
+
+<blockquote><p>"We need to understand in real time what the agents are doing and what risks those actions create" <strong>[5]</strong>.</p></blockquote>
+
+<h2>Models: the frontier lands in other clouds' catalogs</h2>
+
+<h3>OpenAI — in the Model Garden</h3>
+
+<p><a href="https://openai.com/index/openai-models-google-cloud/" target="_blank" rel="noopener">OpenAI's frontier models and Codex agentic workflows will arrive on Google Cloud's Model Garden</a>, with native access on Google's infrastructure and governance <strong>[6]</strong>. General availability is weeks away <strong>[6]</strong>.</p>
+
+<p>Microsoft remains the primary partner <strong>[6]</strong>. The provider will be chosen per workload, not per annual contract <strong>[6]</strong>.</p>
+
+<h3>DeepSeek — search in the API</h3>
+
+<p>DeepSeek <a href="https://api-docs.deepseek.com/zh-cn/news/news261017" target="_blank" rel="noopener">updated its V4.1 Flash to the 1017 version</a> and opened two endpoints, Search and Fetch, on its own search engine <strong>[7]</strong>. The index totals on the order of 100 billion pages, with a filter for manipulative SEO <strong>[7]</strong>.</p>
+
+<p>Pricing targets volume: <strong>¥5 per 1,000 requests</strong>, billed from November 1 <strong>[7]</strong>. The model shipped open weights, after improving at complete projects <strong>[7]</strong>.</p>
+
+<h3>Qwen — BlenderWorld</h3>
+
+<p>Qwen's team at Alibaba <a href="https://huggingface.co/papers/2610.23986" target="_blank" rel="noopener">published BlenderWorld</a>, the first comprehensive benchmark for visual 3D-creation agents: <strong>223 tasks</strong> (text, image or video) <strong>[8]</strong><strong>[9]</strong>. Each submission is rendered and scored against <strong>2,651 binary rubrics</strong> <strong>[8]</strong>.</p>
+
+<p>The ceiling stays far: GPT-6-Astra leads with <strong>79.9</strong>, and no one completes more than <strong>42.2%</strong> of tasks "perfectly" <strong>[8]</strong>. DeepSeek V4.1 Flash, 66.0; Qwen3.8-Max, 61.1 <strong>[8]</strong>.</p>
+
+<h2>Product: web and deploys ready for agents</h2>
+
+<h3>Cloudflare — WebMCP in stores</h3>
+
+<p>Cloudflare activated <a href="https://blog.cloudflare.com/webmcp-commerce/" target="_blank" rel="noopener">its edge implementation of WebMCP</a> with Commerce.com across almost <strong>100,000 domains</strong> of e-commerce <strong>[10]</strong>. Google's experimental standard exposes structured tools on the page (search_products, add_to_cart) so agents stop guessing buttons <strong>[10]</strong>.</p>
+
+<p>Everything happens in the shopper's browser session, on the store's own domain; no credentials to third parties and a human-final checkout <strong>[10]</strong>. There is per-store opt-out and a fallback when the MCP server fails <strong>[10]</strong>.</p>
+
+<h3>AWS — ECS Gateway</h3>
+
+<p>Amazon ECS <a href="https://aws.amazon.com/blogs/aws/introducing-amazon-ecs-gateway-a-fully-managed-ingress-solution-for-ecs-services/" target="_blank" rel="noopener">shipped ECS Gateway</a>, which automates ingress for containerized services: ACM certificates, DNS hostname, listener rules and security groups create themselves inside the customer's account <strong>[11]</strong>.</p>
+
+<p>Platform sets the standards once; applications connect with no networking work <strong>[11]</strong>. Up to <strong>25 services</strong> share one ALB at no extra charge, already available in all commercial Regions <strong>[11]</strong>.</p>
+
+<h2>Factory and physical world: GTC Berlin and the connected plant</h2>
+
+<h3>NVIDIA — Cosmos opened</h3>
+
+<p>At GTC Berlin, NVIDIA <a href="https://blogs.nvidia.com/blog/cosmos-open-train-evaluate-deploy-world-models/" target="_blank" rel="noopener">opened up more of Cosmos</a>, its physical <em>world models</em> <strong>[12]</strong>. Cosmos Data Factory adds <strong>five cloud-native blueprints</strong> for curating data, on GitHub and via Azure, Nebius and CoreWeave <strong>[12]</strong>.</p>
+
+<p>Cosmos Framework exposes training, RL and deployment as <em>agent skills</em> for open models (GR00T, Alpamayo, the Qwen family or Pi0.5); Cosmos 3 NIM promises <strong>2× faster</strong> inference <strong>[12]</strong>. Porsche uses Data Factory in its Volkswagen flywheel and expects <strong>90%</strong> fewer repeated physical tests and <strong>85%</strong> shorter cycles <strong>[12]</strong>.</p>
+
+<h3>JD.com — AI in the factory</h3>
+
+<p>JINGDONG Industrials, JD.com's industrial arm, <a href="https://jdcorporateblog.com/jingdong-industrials-and-amd-partner-to-bring-ai-to-factory-operations/" target="_blank" rel="noopener">signed an agreement with AMD on October 13 in Shanghai</a> to bring AI into factories <strong>[13]</strong>. JoyIndustrial will be adapted to AMD Ryzen AI Max to run on shop-floor devices <strong>[13]</strong>.</p>
+
+<p>The announced uses span predictive maintenance, visual inspection, workplace safety and world models that anticipate collisions by reading trajectories <strong>[13]</strong>.</p>
+
+<blockquote><p>AMD's Spencer Pan: "moving AI beyond seeing and recognizing to understanding, reasoning, and predicting" <strong>[13]</strong>.</p></blockquote>
+
+<h2>Also this week: practical quantum, digital sovereignty and $368B</h2>
+
+<h3>Google — magic states</h3>
+
+<p>Google Quantum AI <a href="https://blog.google/innovation-and-ai/models-and-research/quantum-computing/magic-state-cultivation-quantum-computing/" target="_blank" rel="noopener">demonstrated magic state cultivation on Willow</a>, to produce the states error correction will demand <strong>[14]</strong>. The protocol cut errors <strong>40×</strong> and reached a record logical fidelity of <strong>99.99%</strong>; the paper appears in Science <strong>[14]</strong>. Up to <strong>95%</strong> of a quantum machine's capacity was estimated to go into producing those states: that is the bottleneck removed <strong>[14]</strong>.</p>
+
+<h3>Microsoft — sovereignty as a continuum</h3>
+
+<p>Ahead of Ignite, Microsoft <a href="https://blogs.microsoft.com/blog/2026/10/20/advancing-digital-sovereignty-with-greater-control-and-choice/" target="_blank" rel="noopener">turned sovereignty into a continuum</a> of public cloud, private cloud and partners, with the workload as the criterion <strong>[15]</strong>. Arriving: Sovereign Control Panel (public preview), Just-in-time Access and Customer Lockbox, Data Guardian and Production Touch Ledger in the EU/EFTA, and external keys now GA <strong>[15]</strong>. Foundry Local and GitHub Enterprise Local go GA on Azure Local <strong>[15]</strong>.</p>
+
+<h3>Google — Southeast Asia</h3>
+
+<p><a href="https://blog.google/company-news/inside-google/around-the-globe/google-asia/e-conomy-sea-report-2026/" target="_blank" rel="noopener">The e-Conomy SEA 2026 report</a> (Google, Temasek and Bain) projects <strong>$368 billion</strong> of digital economy in Southeast Asia, up <strong>17%</strong>, on track to pass $1 trillion in 2035 <strong>[16]</strong>. The engine is real: <strong>243 million</strong> people use generative AI daily (58% of the working population) and <strong>75%</strong> accept buying through agents <strong>[16]</strong>.</p>
+
+<h2>Our take</h2>
+
+<p>The week points to one thesis: agents now live inside the company and the shop window. AI-assisted coordinated disclosure is available infrastructure; patching gets planned as a process, not an incident <strong>[1]</strong><strong>[3]</strong>. The model is chosen per workload, not per annual contract <strong>[6]</strong><strong>[7]</strong>. And between e-Conomy (75% agentic buyers <strong>[16]</strong>) and WebMCP live on nearly 100,000 stores <strong>[10]</strong>, agentic checkout needs an owner before peak season.</p>
+
+<h2>Sources</h2>
+
+<ul>
+<li><strong>[1]</strong> Cloudflare — "Cloudflare deploys protections against php2shell vulnerability", Oct 21, 2026. https://blog.cloudflare.com/php-vulnerabilities-waf-protection/</li>
+<li><strong>[2]</strong> PHP Group — "PHP security release announcement for php2shell fixes", Oct 21, 2026. https://www.php.net/archive/2026.php#2026-10-21-5</li>
+<li><strong>[3]</strong> OpenAI — "Patch the Planet: global response coordination as agents uncover critical vulnerabilities", Oct 21, 2026. https://openai.com/index/coordinated-disclosure-of-critical-vulnerabilities/</li>
+<li><strong>[4]</strong> Cloudflare — "Introducing full transaction detection for Cloudflare WAF", Oct 21, 2026. https://blog.cloudflare.com/full-transaction-waf/</li>
+<li><strong>[5]</strong> Microsoft — "Securing the agentic insider", Oct 19, 2026. https://blogs.microsoft.com/blog/2026/10/19/securing-the-agentic-insider/</li>
+<li><strong>[6]</strong> OpenAI — "OpenAI models are coming to Google Cloud", Oct 21, 2026. https://openai.com/index/openai-models-google-cloud/</li>
+<li><strong>[7]</strong> DeepSeek — "New DeepSeek V4.1 Flash version (V4.1-Flash-1017)" (translated title), Oct 17, 2026. https://api-docs.deepseek.com/zh-cn/news/news261017</li>
+<li><strong>[8]</strong> Qwen (Alibaba) — "Benchmarking Visual Agents for 3D Creation from Real-World References", Oct 20, 2026. https://huggingface.co/papers/2610.23986</li>
+<li><strong>[9]</strong> Qwen — "BlenderWorld" (official dataset), Oct 2026. https://huggingface.co/datasets/Qwen/BlenderWorld</li>
+<li><strong>[10]</strong> Cloudflare — "How Commerce.com and Cloudflare are getting storefronts ready for AI agents", Oct 21, 2026. https://blog.cloudflare.com/webmcp-commerce/</li>
+<li><strong>[11]</strong> AWS — "Introducing Amazon ECS Gateway: A fully-managed ingress solution for ECS services", Oct 20, 2026. https://aws.amazon.com/blogs/aws/introducing-amazon-ecs-gateway-a-fully-managed-ingress-solution-for-ecs-services/</li>
+<li><strong>[12]</strong> NVIDIA — "NVIDIA Cosmos Opens New Tools to Train, Evaluate and Deploy World Models", Oct 21, 2026. https://blogs.nvidia.com/blog/cosmos-open-train-evaluate-deploy-world-models/</li>
+<li><strong>[13]</strong> JD.com — "JINGDONG Industrials and AMD Partner to Bring AI to Factory Operations", Oct 15, 2026. https://jdcorporateblog.com/jingdong-industrials-and-amd-partner-to-bring-ai-to-factory-operations/</li>
+<li><strong>[14]</strong> Google — "Bringing the magic: Google breaks open a bottleneck in quantum computing", Oct 15, 2026. https://blog.google/innovation-and-ai/models-and-research/quantum-computing/magic-state-cultivation-quantum-computing/</li>
+<li><strong>[15]</strong> Microsoft — "Advancing digital sovereignty with greater control and choice", Oct 20, 2026. https://blogs.microsoft.com/blog/2026/10/20/advancing-digital-sovereignty-with-greater-control-and-choice/</li>
+<li><strong>[16]</strong> Google — "Southeast Asia's digital economy to hit $368 billion", Oct 21, 2026. https://blog.google/company-news/inside-google/around-the-globe/google-asia/e-conomy-sea-report-2026/</li>
+</ul>
+
+<p><em>Written and reviewed by the editorial team.</em></p>
+
+<p>Want the weekly roundup in your inbox? Subscribe to the blog newsletter.</p>
