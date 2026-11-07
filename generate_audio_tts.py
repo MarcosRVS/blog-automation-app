@@ -237,7 +237,7 @@ def synthesize_audio_gemini_tts(
     output_path: str,
     api_key: str,
     lang: str = "es",
-    voice_name: str = "Aoede",
+    voice_name: str = "Bodi",
 ) -> bool:
     """
     Sintetiza el guion completo con `gemini-3.8-flash-tts` (con fallback a `gemini-2.5-flash-preview-tts`).
@@ -247,6 +247,11 @@ def synthesize_audio_gemini_tts(
         return False
 
     tts_models = ["gemini-3.8-flash-tts", "gemini-2.5-flash-preview-tts"]
+    voices_to_try = [voice_name]
+    if voice_name.lower() == "bodi":
+        voices_to_try.append("Bodhi")
+    voices_to_try.append("Puck")
+
     # Dividir en bloques amplios (~2500 caracteres por bloque) para no exceder límites de generación de audio por llamada
     blocks = split_into_tts_chunks(text, max_len=2500)
     style_prefix = (
@@ -256,88 +261,105 @@ def synthesize_audio_gemini_tts(
     )
 
     for model_name in tts_models:
-        print(
-            f"[*] Sintetizando voz humana con {model_name} (voz: {voice_name}, {len(blocks)} bloque(s))..."
-        )
-        pcm_frames: List[bytes] = []
-        sample_rate = 24000
-        success = True
+        for candidate_voice in voices_to_try:
+            print(
+                f"[*] Sintetizando voz humana con {model_name} (voz: {candidate_voice}, {len(blocks)} bloque(s))..."
+            )
+            pcm_frames: List[bytes] = []
+            sample_rate = 24000
+            success = True
+            voice_invalid = False
 
-        for idx, block in enumerate(blocks, 1):
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
-            payload = {
-                "contents": [{"parts": [{"text": style_prefix + block}]}],
-                "generationConfig": {
-                    "responseModalities": ["AUDIO"],
-                    "speechConfig": {
-                        "voiceConfig": {
-                            "prebuiltVoiceConfig": {"voiceName": voice_name}
-                        }
+            for idx, block in enumerate(blocks, 1):
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+                payload = {
+                    "contents": [{"parts": [{"text": style_prefix + block}]}],
+                    "generationConfig": {
+                        "responseModalities": ["AUDIO"],
+                        "speechConfig": {
+                            "voiceConfig": {
+                                "prebuiltVoiceConfig": {"voiceName": candidate_voice}
+                            }
+                        },
                     },
-                },
-            }
-            try:
-                req = urllib.request.Request(
-                    url,
-                    data=json.dumps(payload).encode("utf-8"),
-                    headers={"Content-Type": "application/json"},
-                )
-                with urllib.request.urlopen(req, timeout=120) as resp:
-                    data = json.loads(resp.read().decode("utf-8"))
-                    part = data["candidates"][0]["content"]["parts"][0]
-                    inline = part.get("inlineData") or part.get("inline_data")
-                    if not inline or "data" not in inline:
-                        raise ValueError("Respuesta sin inlineData de audio")
-                    mime = inline.get("mimeType", "")
-                    m_rate = re.search(r"rate=(\d+)", mime)
-                    if m_rate:
-                        sample_rate = int(m_rate.group(1))
-                    raw_bytes = base64.b64decode(inline["data"])
-                    # Si ya viene con cabecera RIFF/WAV, extraer los frames PCM
-                    if raw_bytes[:4] == b"RIFF":
-                        pcm_frames.append(raw_bytes[44:])
-                    else:
-                        pcm_frames.append(raw_bytes)
-            except Exception as e:
-                print(f"[!] Aviso en {model_name} (bloque {idx}/{len(blocks)}): {e}")
-                success = False
-                break
-
-        if success and pcm_frames:
-            with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp_wav:
-                wav_path = tmp_wav.name
-            try:
-                with wave.open(wav_path, "wb") as wf:
-                    wf.setnchannels(1)
-                    wf.setsampwidth(2)  # 16-bit PCM
-                    wf.setframerate(sample_rate)
-                    wf.writeframes(b"".join(pcm_frames))
-
-                ffmpeg_bin = shutil.which("ffmpeg")
-                if ffmpeg_bin:
-                    subprocess.run(
-                        [
-                            ffmpeg_bin,
-                            "-y",
-                            "-i",
-                            wav_path,
-                            "-codec:a",
-                            "libmp3lame",
-                            "-b:a",
-                            "192k",
-                            output_path,
-                        ],
-                        check=True,
-                        stdout=subprocess.DEVNULL,
-                        stderr=subprocess.DEVNULL,
+                }
+                try:
+                    req = urllib.request.Request(
+                        url,
+                        data=json.dumps(payload).encode("utf-8"),
+                        headers={"Content-Type": "application/json"},
                     )
-                else:
-                    shutil.move(wav_path, output_path)
-                print(f"[✓] Audio generado con {model_name}: {output_path}")
-                return True
-            finally:
-                if os.path.exists(wav_path):
-                    os.remove(wav_path)
+                    with urllib.request.urlopen(req, timeout=120) as resp:
+                        data = json.loads(resp.read().decode("utf-8"))
+                        part = data["candidates"][0]["content"]["parts"][0]
+                        inline = part.get("inlineData") or part.get("inline_data")
+                        if not inline or "data" not in inline:
+                            raise ValueError("Respuesta sin inlineData de audio")
+                        mime = inline.get("mimeType", "")
+                        m_rate = re.search(r"rate=(\d+)", mime)
+                        if m_rate:
+                            sample_rate = int(m_rate.group(1))
+                        raw_bytes = base64.b64decode(inline["data"])
+                        if raw_bytes[:4] == b"RIFF":
+                            pcm_frames.append(raw_bytes[44:])
+                        else:
+                            pcm_frames.append(raw_bytes)
+                except urllib.error.HTTPError as he:
+                    err_body = he.read().decode("utf-8", errors="ignore")
+                    print(
+                        f"[!] Aviso en {model_name} con voz {candidate_voice} (bloque {idx}/{len(blocks)}): HTTP {he.code} - {err_body[:200]}"
+                    )
+                    success = False
+                    if he.code == 400 and "voice" in err_body.lower():
+                        voice_invalid = True
+                    break
+                except Exception as e:
+                    print(
+                        f"[!] Aviso en {model_name} con voz {candidate_voice} (bloque {idx}/{len(blocks)}): {e}"
+                    )
+                    success = False
+                    break
+
+            if success and pcm_frames:
+                with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp_wav:
+                    wav_path = tmp_wav.name
+                try:
+                    with wave.open(wav_path, "wb") as wf:
+                        wf.setnchannels(1)
+                        wf.setsampwidth(2)  # 16-bit PCM
+                        wf.setframerate(sample_rate)
+                        wf.writeframes(b"".join(pcm_frames))
+
+                    ffmpeg_bin = shutil.which("ffmpeg")
+                    if ffmpeg_bin:
+                        subprocess.run(
+                            [
+                                ffmpeg_bin,
+                                "-y",
+                                "-i",
+                                wav_path,
+                                "-codec:a",
+                                "libmp3lame",
+                                "-b:a",
+                                "192k",
+                                output_path,
+                            ],
+                            check=True,
+                            stdout=subprocess.DEVNULL,
+                            stderr=subprocess.DEVNULL,
+                        )
+                    else:
+                        shutil.move(wav_path, output_path)
+                    print(
+                        f"[✓] Audio generado con {model_name} (voz: {candidate_voice}): {output_path}"
+                    )
+                    return True
+                finally:
+                    if os.path.exists(wav_path):
+                        os.remove(wav_path)
+
+            if not voice_invalid:
+                break
 
     return False
 
