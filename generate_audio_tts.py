@@ -17,6 +17,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -121,7 +122,16 @@ def clean_markdown_for_speech(md_text: str) -> str:
     text = re.sub(r"\bEE\.\s*UU\.", "Estados Unidos", text)
     text = re.sub(r"(\d+)\s*×", r"\1 veces", text)
 
-    # 12. Limpiar espacios antes de signos de puntuación y saltos de línea múltiples
+    # 12. Eliminar posibles acotaciones escénicas o etiquetas de locutor (ej. [Pausa], (tono serio), Locutor:)
+    text = re.sub(r"\[[^\]]*\]", "", text)
+    text = re.sub(
+        r"^\s*(?:Locutor|Narrador|Host|Speaker)\s*:\s*",
+        "",
+        text,
+        flags=re.IGNORECASE | re.MULTILINE,
+    )
+
+    # 13. Limpiar espacios antes de signos de puntuación y saltos de línea múltiples
     text = re.sub(r"\s+([.,;:!?])", r"\1", text)
     text = re.sub(r",\s*,", ",", text)
     text = re.sub(r"[ \t]{2,}", " ", text)
@@ -139,17 +149,17 @@ def generate_podcast_script_with_gemini(
         )
         return cleaned_text
 
-    models_to_try = ["gemini-3.8-flash", "gemini-2.5-flash"]
+    models_to_try = ["gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.5-flash"]
     lang_instruction = "español" if lang == "es" else "inglés"
     prompt = f"""Eres un locutor profesional de podcasts sobre tecnología e inteligencia artificial.
 Convierte el siguiente artículo técnico en una narración fluida, cálida, amena y natural para ser leída en un podcast en {lang_instruction}.
 
-Reglas:
+Reglas ESTRICTAS:
 - Conserva todos los datos, empresas, nombres y cifras clave de principio a fin sin omitir secciones.
 - No uses listas con viñetas ni encabezados telegráficos; redacta frases completas con transiciones sonoras naturales ("Pasando al terreno de los semiconductores...", "Por su parte, desde Europa...").
-- No agregues música ni efectos de sonido escritos (ej. NO pongas [Música de fondo]).
+- PROHIBIDO incluir acotaciones, instrucciones de voz, etiquetas de locutor ("Locutor:", "Host:"), corchetes o paréntesis con indicaciones escénicas (ej. NO pongas [Pausa], [Música], (tono entusiasta)).
 - No incluyas URLs ni números de referencia bibliográfica.
-- Devuelve ÚNICAMENTE el texto que el locutor debe pronunciar.
+- Devuelve ÚNICAMENTE las palabras exactas que el locutor debe pronunciar en voz alta, en texto plano sin asteriscos ni formato Markdown.
 
 Artículo:
 {cleaned_text}
@@ -172,8 +182,24 @@ Artículo:
                 data = json.loads(resp.read().decode("utf-8"))
                 candidates = data.get("candidates", [])
                 if candidates:
+                    raw_script = candidates[0]["content"]["parts"][0]["text"].strip()
+                    # Limpiar cualquier asterisco, encabezado o acotación residual que el LLM haya incluido
+                    raw_script = re.sub(r"\[[^\]]*\]", "", raw_script)
+                    raw_script = re.sub(
+                        r"\([^\)]*(?:tono|pausa|música|voz|locutor|risa| énfasis)[^\)]*\)",
+                        "",
+                        raw_script,
+                        flags=re.IGNORECASE,
+                    )
+                    raw_script = re.sub(
+                        r"^\s*(?:Locutor|Narrador|Host|Speaker)\s*:\s*",
+                        "",
+                        raw_script,
+                        flags=re.IGNORECASE | re.MULTILINE,
+                    )
+                    raw_script = re.sub(r"[*_#`]+", "", raw_script)
                     print(f"[✓] Guion adaptado con {model_name}.")
-                    return candidates[0]["content"]["parts"][0]["text"].strip()
+                    return raw_script.strip()
         except Exception as e:
             print(f"[!] Aviso con {model_name}: {e}")
 
@@ -252,13 +278,10 @@ def synthesize_audio_gemini_tts(
         voices_to_try.append("Bodhi")
     voices_to_try.append("Puck")
 
-    # Dividir en bloques amplios (~2500 caracteres por bloque) para no exceder límites de generación de audio por llamada
-    blocks = split_into_tts_chunks(text, max_len=2500)
-    style_prefix = (
-        "Lee el siguiente boletín tecnológico con voz natural, cálida, profesional y ritmo de locutor de podcast:\n\n"
-        if lang == "es"
-        else "Read the following tech newsletter in a warm, natural, engaging podcast host voice:\n\n"
-    )
+    # Dividir en bloques amplios (~4500 caracteres por bloque) para minimizar llamadas y evitar límites de cuota RPM.
+    # IMPORTANTE: Enviar ÚNICAMENTE el texto puro a pronunciar en `contents` (sin prefijos de instrucción),
+    # ya que los modelos TTS leen en voz alta cualquier instrucción incluida dentro del campo `text`.
+    blocks = split_into_tts_chunks(text, max_len=4500)
 
     for model_name in tts_models:
         for candidate_voice in voices_to_try:
@@ -273,7 +296,7 @@ def synthesize_audio_gemini_tts(
             for idx, block in enumerate(blocks, 1):
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
                 payload = {
-                    "contents": [{"parts": [{"text": style_prefix + block}]}],
+                    "contents": [{"parts": [{"text": block}]}],
                     "generationConfig": {
                         "responseModalities": ["AUDIO"],
                         "speechConfig": {
@@ -283,40 +306,53 @@ def synthesize_audio_gemini_tts(
                         },
                     },
                 }
-                try:
-                    req = urllib.request.Request(
-                        url,
-                        data=json.dumps(payload).encode("utf-8"),
-                        headers={"Content-Type": "application/json"},
-                    )
-                    with urllib.request.urlopen(req, timeout=120) as resp:
-                        data = json.loads(resp.read().decode("utf-8"))
-                        part = data["candidates"][0]["content"]["parts"][0]
-                        inline = part.get("inlineData") or part.get("inline_data")
-                        if not inline or "data" not in inline:
-                            raise ValueError("Respuesta sin inlineData de audio")
-                        mime = inline.get("mimeType", "")
-                        m_rate = re.search(r"rate=(\d+)", mime)
-                        if m_rate:
-                            sample_rate = int(m_rate.group(1))
-                        raw_bytes = base64.b64decode(inline["data"])
-                        if raw_bytes[:4] == b"RIFF":
-                            pcm_frames.append(raw_bytes[44:])
-                        else:
-                            pcm_frames.append(raw_bytes)
-                except urllib.error.HTTPError as he:
-                    err_body = he.read().decode("utf-8", errors="ignore")
-                    print(
-                        f"[!] Aviso en {model_name} con voz {candidate_voice} (bloque {idx}/{len(blocks)}): HTTP {he.code} - {err_body[:200]}"
-                    )
-                    success = False
-                    if he.code == 400 and "voice" in err_body.lower():
-                        voice_invalid = True
-                    break
-                except Exception as e:
-                    print(
-                        f"[!] Aviso en {model_name} con voz {candidate_voice} (bloque {idx}/{len(blocks)}): {e}"
-                    )
+                block_done = False
+                for attempt in range(1, 4):
+                    try:
+                        req = urllib.request.Request(
+                            url,
+                            data=json.dumps(payload).encode("utf-8"),
+                            headers={"Content-Type": "application/json"},
+                        )
+                        with urllib.request.urlopen(req, timeout=120) as resp:
+                            data = json.loads(resp.read().decode("utf-8"))
+                            part = data["candidates"][0]["content"]["parts"][0]
+                            inline = part.get("inlineData") or part.get("inline_data")
+                            if not inline or "data" not in inline:
+                                raise ValueError("Respuesta sin inlineData de audio")
+                            mime = inline.get("mimeType", "")
+                            m_rate = re.search(r"rate=(\d+)", mime)
+                            if m_rate:
+                                sample_rate = int(m_rate.group(1))
+                            raw_bytes = base64.b64decode(inline["data"])
+                            if raw_bytes[:4] == b"RIFF":
+                                pcm_frames.append(raw_bytes[44:])
+                            else:
+                                pcm_frames.append(raw_bytes)
+                            block_done = True
+                            break
+                    except urllib.error.HTTPError as he:
+                        err_body = he.read().decode("utf-8", errors="ignore")
+                        if he.code == 429 and attempt < 3:
+                            wait_s = 20 * attempt
+                            print(
+                                f"[*] Límite de velocidad alcanzado en bloque {idx}/{len(blocks)}; esperando {wait_s}s para reintentar..."
+                            )
+                            time.sleep(wait_s)
+                            continue
+                        print(
+                            f"[!] Aviso en {model_name} con voz {candidate_voice} (bloque {idx}/{len(blocks)}): HTTP {he.code} - {err_body[:200]}"
+                        )
+                        if he.code == 400 and "voice" in err_body.lower():
+                            voice_invalid = True
+                        break
+                    except Exception as e:
+                        print(
+                            f"[!] Aviso en {model_name} con voz {candidate_voice} (bloque {idx}/{len(blocks)}): {e}"
+                        )
+                        break
+
+                if not block_done:
                     success = False
                     break
 
